@@ -1,21 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import {numOfCity} from "./controllers/aggregateController"
 import { graphqlHTTP } from "express-graphql";
 import schema from "./data/schema";
 import resolvers from "./data/resolvers";
-
-dotenv.config();
 const app = express();
+dotenv.config();
+app.use(express.json())
 
 app.use(
-  "/",
+  "/graphql",
   graphqlHTTP({
     schema,
     rootValue: resolvers,
     graphiql: true,
   })
 );
+app.get('/test/:city',numOfCity)
 
 const startServer = async () => {
   try {
