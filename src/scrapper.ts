@@ -15,7 +15,10 @@ type Website = {
 async function fetchWebsites() {
   let x: number;
   let websites: Website[] = [];
-  for (x = 0; x <= 10; x++) {
+  for (x = 1; x <= 10; x++) {
+    if(x==2){
+      continue
+    }
     try {
       const response = await axios.get(
         `https://enamad.ir/DomainListForMIMT/Index/${x}`
@@ -78,3 +81,4 @@ async function main() {
   }
 }
 main();
+export {Website} 
