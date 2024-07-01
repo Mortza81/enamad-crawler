@@ -9,8 +9,19 @@ const schema = buildSchema(`
     domain: String
     city: String
   }
+  type CountCity {
+  city: String!
+  count: Int!
+  }
+  type ByStar{
+  websites:[Website]!
+  star:Int!
+  count:Int!
+  }
   type Query {
+    perCity:[CountCity]
     getWebsites(name: String, domain: String, stars: Int, expiration: String): [Website]
+    websitesByStars: [ByStar]
   }
 `);
 
