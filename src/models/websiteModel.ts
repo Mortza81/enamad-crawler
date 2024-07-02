@@ -21,5 +21,9 @@ const websiteSchema=new mongoos.Schema({
         required:true
     }
 })
+websiteSchema.pre('find',function(next){
+    this.select('-__v')
+    next()
+})
 const Website=mongoos.model('Website',websiteSchema)
 export {Website}
