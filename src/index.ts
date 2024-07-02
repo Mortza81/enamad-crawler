@@ -1,13 +1,14 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { graphqlHTTP } from "express-graphql";
 import schema from "./data/schema";
 import resolvers from "./data/resolvers";
-import { graphql } from "graphql";
+import{exportCsv, webPercity, websitesByStars} from './controllers/controller'
+
 const app = express();
 dotenv.config();
-app.use(express.json())
+app.use(express.json());
 
 app.use(
   "/graphql",
@@ -17,39 +18,10 @@ app.use(
     graphiql: true,
   })
 );
-app.get('/websitesByStar', async (req: Request, res: Response) => {
-  const query = `
-  query {
-  websitesByStars{
-    count
-    star
-    websites{
-      name
-      city
-      domain
-      expiration
-    }
-  }
-}
-  `
-  try {
-    const data = await graphql({
-      source: query,
-      rootValue: resolvers,
-      schema
-    })
-    res.status(200).json({
-      status: 'success',
-      data:[data]
-    })
-  }
-  catch (err) {
-    res.status(400).json({
-      status: 'failed',
-      error:err
-    })
-  }
-})
+app.get("/websitesByStar",websitesByStars);
+app.get("/webPercity", webPercity);
+
+app.get("/export-csv",exportCsv);
 const startServer = async () => {
   try {
     const dbUrl = process.env.DB_URL;

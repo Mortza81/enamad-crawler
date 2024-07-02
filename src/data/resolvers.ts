@@ -1,6 +1,6 @@
 import { Website } from "../models/websiteModel";
 
-type FilterArgs = {
+export type FilterArgs = {
   name?: string;
   domain?: string;
   stars?: number;
