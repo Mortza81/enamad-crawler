@@ -12,10 +12,15 @@ type Website = {
   expiration: string;
   city: string;
 };
-async function fetchWebsites() {
+const arrayRange = (start:number, stop:number, step:number) =>
+  Array.from(
+  { length: (stop - start) / step + 1 },
+  (value, index) => start + index * step
+);
+async function fetchWebsites(page:number) {
   let x: number;
   let websites: Website[] = [];
-  for (x = 1; x <= 10; x++) {
+  for (x of arrayRange(1,page,1)) {
     if(x==2){
       continue
     }
@@ -67,17 +72,18 @@ async function fetchWebsites() {
   }
   return websites;
 }
-async function main() {
+async function main(pages:number) {
   try {
     await mongoose.connect(DB_URL);
     console.log("Connected to MongoDB");
     let x: number;
-    const websites = await fetchWebsites();
-    await Website.insertMany(websites)
+    const websites =fetchWebsites(pages);
+    console.log(websites);
+    // await Website.insertMany(websites)
     await mongoose.disconnect();
     console.log("Disconnected from MongoDB");
   } catch (error) {
     console.error("Error:", error);
   }
 }
-main();
+main(10);
