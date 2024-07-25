@@ -2,6 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import _ from "lodash";
 import { Website } from "./models/websiteModel";
 dotenv.config();
 const DB_URL = "mongodb://localhost:27017/enamad";
@@ -20,7 +21,7 @@ const arrayRange = (start: number, stop: number, step: number) =>
 async function fetchWebsites(page: number) {
   let x: number;
   let websites: Website[] = [];
-  for (x of arrayRange(1, page, 1)) {
+  for await (x of arrayRange(1, page, 1)) {
     if (x == 2) {
       continue;
     }
@@ -77,12 +78,17 @@ async function main(pages: number) {
     await mongoose.connect(DB_URL);
     console.log("Connected to MongoDB");
     let x: number;
+    console.time("test");
     const websites = await fetchWebsites(pages);
-    await Website.insertMany(websites);
+    const chunked = _.chunk(websites, 20);
+    for await (const data of chunked) {
+      await Website.insertMany(data);
+    }
+    console.timeEnd("test");
     await mongoose.disconnect();
     console.log("Disconnected from MongoDB");
   } catch (error) {
     console.error("Error:", error);
   }
 }
-main(1000);
+main(20);
